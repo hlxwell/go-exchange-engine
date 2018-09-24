@@ -1,15 +1,6 @@
-# States changes
+# OrderBook concept
 
-Status 1:
-> User A: JPY ¥330
-
-Action 1:
-> User A Buy 10XRP at 33JPY
-> LockBalance: User A, 330JPY, 2018-08-08 21:12:10
-
-Status 2:
-> User A: Total: 330JPY, Available: 0JPY, Locked: 330JPY
-
+- https://en.wikipedia.org/wiki/Order_book_(trading)
 
 # Awesome Projects about Exchanges
 
@@ -20,14 +11,18 @@ Status 2:
 
 ## Go
 
-* [hub](https://github.com/leandro-lugaresi/hub) - A Message/Event Hub for Go applications, using publish/subscribe pattern with support for alias like rabbitMQ exchanges.
-* [rabbus](https://github.com/rafaeljesus/rabbus) - A tiny wrapper over amqp exchanges and queues.
+- [hub](https://github.com/leandro-lugaresi/hub) - A Message/Event Hub for Go applications, using publish/subscribe pattern with support for alias like rabbitMQ exchanges.
+- [rabbus](https://github.com/rafaeljesus/rabbus) - A tiny wrapper over amqp exchanges and queues.
+
+## Rails
+
+- https://github.com/peatio/peatio
 
 ## Market Price
 
-* [stockdb](https://github.com/miaolz123/stockdb) - Market Data Sample Project.
-* [Build ohlc with postgresql](https://www.compose.com/articles/building-ohlc-data-in-postgresql/)
-* [Orderbook database](https://github.com/rickyhan/tectonicdb)
+- [stockdb](https://github.com/miaolz123/stockdb) - Market Data Sample Project.
+- [Build ohlc with postgresql](https://www.compose.com/articles/building-ohlc-data-in-postgresql/)
+- [Orderbook database](https://github.com/rickyhan/tectonicdb)
 
 ## Articles
 
