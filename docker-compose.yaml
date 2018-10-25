@@ -5,6 +5,9 @@ networks:
     driver: bridge
 
 services:
+  web_service:
+    build: ./web_service
+
   account_manager:
     build: ./account_manager
 
