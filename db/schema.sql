@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS "accounting_entries" (
     "updated_at" TIMESTAMP
 );
 
-DROP TABLE IF EXISTS "orders"
+DROP TABLE IF EXISTS "orders";
 CREATE TABLE IF NOT EXISTS "orders" (
     "id" SERIAL PRIMARY KEY,
     "user_id" INT,
@@ -75,8 +75,7 @@ CREATE TABLE IF NOT EXISTS "orders" (
     "updated_at" TIMESTAMP
 );
 
-
-DROP TABLE IF EXISTS "trades"
+DROP TABLE IF EXISTS "trades";
 CREATE TABLE IF NOT EXISTS "trades" (
     "id" SERIAL PRIMARY KEY,
     "sequence_no" INT,
@@ -91,4 +90,3 @@ CREATE TABLE IF NOT EXISTS "trades" (
     "created_at" TIMESTAMP,
     "updated_at" TIMESTAMP
 );
-
