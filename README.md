@@ -29,3 +29,21 @@
 - https://web.archive.org/web/20110219163448/http://howtohft.wordpress.com/2011/02/15/how-to-build-a-fast-limit-order-book/
 
 
+## Web framework
+
+- https://gin-gonic.github.io/gin/
+- https://godoc.org/github.com/gin-gonic/gin
+
+## Kafka vs NATS
+
+- https://dzone.com/articles/benchmarking-nats-streaming-and-apache-kafka
+
+## Register center
+
+> Consul vs ZooKeeper vs Etcd
+
+## CockroachDB
+
+- https://www.cockroachlabs.com/
+
+Why choose CockroachDB? It is because of it's scalability also can keep the consistancy. So we can scale the "Trade Clearing" and "Order Creating" Process.

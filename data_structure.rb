@@ -45,15 +45,15 @@
 				// ??? average_deal_unit_price: 3.3
 				trades: [
 					{
-						id, created_at, order_id 
+						id, created_at, order_id
 						deal_volume: 9,
 						pair_code: XRP_JPY,
 						dealed_unit_price: 3.2,
 						fee: 9 * 0.001 // unit XRP
 					}, {
-						id, created_at, order_id 
+						id, created_at, order_id
 						deal_volume: 1,
-						pair_code: XRP_JPY, 
+						pair_code: XRP_JPY,
 						dealed_unit_price: 3.3,
 						fee: 1 * 0.001 // unit XRP
 					}
@@ -66,18 +66,18 @@
 				volume: 10, // make sure this use has 3.3 * 10 amount of JPY
 				unit_price: 3.3, // order will be deal when 3.3 bought
 				deal_volume: 10, // snapshot
-				// ??? average_deal_unit_price: 3.3
+				# ??? average_deal_unit_price: 3.3
 				trades: [
 					{
-						id, created_at, order_id 
+						id, created_at, order_id
 						deal_volume: 9,
 						pair_code: XRP_JPY,
 						dealed_unit_price: 3.2,
 						fee: 9 * 0.001 // unit XRP
 					}, {
-						id, created_at, order_id 
+						id, created_at, order_id
 						deal_volume: 1,
-						pair_code: XRP_JPY, 
+						pair_code: XRP_JPY,
 						dealed_unit_price: 3.3,
 						fee: 1 * 0.001 // unit XRP
 					}
