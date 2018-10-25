@@ -47,3 +47,9 @@
 - https://www.cockroachlabs.com/
 
 Why choose CockroachDB? It is because of it's scalability also can keep the consistancy. So we can scale the "Trade Clearing" and "Order Creating" Process.
+
+## Articles
+
+[How to Build a Cryptocurrency Exchange App](https://medium.com/swlh/how-to-build-a-cryptocurrency-exchange-app-d463d3e0ccb3)
+
+[Go Cryptotrader](https://github.com/thrasher-/gocryptotrader)
