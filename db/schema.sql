@@ -1,10 +1,10 @@
-DROP DATABASE "go-exchange-engine";
+DROP DATABASE IF EXISTS "go-exchange-engine";
 CREATE DATABASE "go-exchange-engine" ENCODING = "UTF-8";
 
 DROP TABLE IF EXISTS "users";
 CREATE TABLE IF NOT EXISTS "users" (
     "id" SERIAL PRIMARY KEY NOT NULL,
-    "email" STRING NOT NULL UNIQUE,
+    "email" VARCHAR NOT NULL UNIQUE,
     "created_at" TIMESTAMP,
     "updated_at" TIMESTAMP
 );
@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS "accounts";
 CREATE TABLE IF NOT EXISTS "accounts" (
     "id" SERIAL PRIMARY KEY,
     "user_id" INT,
-    "currency" STRING,
+    "currency" VARCHAR,
     "balance" DECIMAL,
     "available_balance" DECIMAL,
     "created_at" TIMESTAMP,
@@ -24,9 +24,9 @@ DROP TABLE IF EXISTS "deposits";
 CREATE TABLE IF NOT EXISTS "deposits" (
     "id" SERIAL PRIMARY KEY,
     "user_id" INT,
-    "currency" STRING,
+    "currency" VARCHAR,
     "amount" DECIMAL,
-    "status" STRING,
+    "status" VARCHAR,
     "confirmations" INT,
     "created_at" TIMESTAMP,
     "updated_at" TIMESTAMP
@@ -36,9 +36,9 @@ DROP TABLE IF EXISTS "withdraws";
 CREATE TABLE IF NOT EXISTS "withdraws" (
     "id" SERIAL PRIMARY KEY,
     "user_id" INT,
-    "currency" STRING,
+    "currency" VARCHAR,
     "amount" DECIMAL,
-    "status" STRING,
+    "status" VARCHAR,
     "created_at" TIMESTAMP,
     "updated_at" TIMESTAMP
 );
@@ -46,13 +46,13 @@ CREATE TABLE IF NOT EXISTS "withdraws" (
 DROP TABLE IF EXISTS "accounting_entries";
 CREATE TABLE IF NOT EXISTS "accounting_entries" (
     "id" SERIAL PRIMARY KEY,
-    "entryable_type" STRING,
-    "entryable_id" STRING,
+    "entryable_type" VARCHAR,
+    "entryable_id" VARCHAR,
     "credit_amount" DECIMAL,
     "credit_account_id" INT,
     "debit_amount" DECIMAL,
     "debit_account_id" INT,
-    "currency" STRING,
+    "currency" VARCHAR,
     "created_at" TIMESTAMP,
     "updated_at" TIMESTAMP
 );
@@ -61,12 +61,12 @@ DROP TABLE IF EXISTS "orders";
 CREATE TABLE IF NOT EXISTS "orders" (
     "id" SERIAL PRIMARY KEY,
     "user_id" INT,
-    "side" STRING,
-    "type" STRING,
-    "pair" STRING,
+    "side" VARCHAR,
+    "type" VARCHAR,
+    "pair" VARCHAR,
     "amount" DECIMAL,
     "price" DECIMAL,
-    "status" STRING,
+    "status" VARCHAR,
     "sequence_no" INT,
     "origin_funds" DECIMAL,
     "left_funds" DECIMAL,
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS "trades" (
     "total_price" DECIMAL,
     "ask_order_id" INT,
     "bid_order_id" INT,
-    "pair" STRING,
+    "pair" VARCHAR,
     "created_at" TIMESTAMP,
     "updated_at" TIMESTAMP
 );
