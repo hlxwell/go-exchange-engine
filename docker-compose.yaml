@@ -11,8 +11,8 @@ services:
   account_manager:
     build: ./account_manager
 
-  order_book:
-    build: ./order_book
+  orderbook:
+    build: ./orderbook
 
   sequencer:
     build: ./sequencer
@@ -21,24 +21,38 @@ services:
     build: ./market_price
 
   db:
-    container_name: roach
-    image: cockroachdb/cockroach:${COCKROACH_VERSION:-v2.0.6}
-    networks:
-      - default
-    command: start --logtostderr --insecure --locality=datacenter=dc-0
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 123321
     ports:
-      - 8000:8080
-      - 9000:26257
+      - 5432:5432
 
-  db-1:
-    container_name: roach-1
-    image: cockroachdb/cockroach:${COCKROACH_VERSION:-v2.0.6}
-    networks:
-      - default
-    command: start --logtostderr --insecure --locality=datacenter=dc-0 --join=roach
+  adminer:
+    image: adminer
+    restart: always
     ports:
-      - 8001:8080
-      - 9001:26257
+      - 8080:8080
+
+  # db:
+  #   container_name: roach
+  #   image: cockroachdb/cockroach:${COCKROACH_VERSION:-v2.0.6}
+  #   networks:
+  #     - default
+  #   command: start --logtostderr --insecure --locality=datacenter=dc-0
+  #   ports:
+  #     - 8000:8080
+  #     - 9000:26257
+
+  # db-1:
+  #   container_name: roach-1
+  #   image: cockroachdb/cockroach:${COCKROACH_VERSION:-v2.0.6}
+  #   networks:
+  #     - default
+  #   command: start --logtostderr --insecure --locality=datacenter=dc-0 --join=roach
+  #   ports:
+  #     - 8001:8080
+  #     - 9001:26257
 
   # db-2:
   #   container_name: roach-2
