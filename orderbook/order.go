@@ -1,4 +1,4 @@
-package main
+package orderbook
 
 import "time"
 
@@ -21,12 +21,13 @@ type Order struct {
 }
 
 // CreateOrder to create a new order
-func CreateOrder() Order {
-	order := Order{Side: buy, Pair: btcjpy, Price: 5000, Amount: 5}
-	order.SequenceNo = 1
+func CreateOrder(orderType OrderType, side Side, pair Pair, price float64, amount float64) *Order {
+	order := &Order{Side: side, Pair: pair, Price: price, Amount: amount}
+	order.ID = 1         // should be filled by DB
+	order.SequenceNo = 1 // sequencer should fill it.
 	order.CreatedAt = time.Now()
 	order.Status = active
-	order.Type = market
+	order.Type = orderType
 	order.OriginFunds = order.Price * order.Amount
 	order.LeftFunds = order.OriginFunds
 	return order

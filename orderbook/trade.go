@@ -1,4 +1,4 @@
-package main
+package orderbook
 
 // Trade struct
 type Trade struct {
@@ -12,4 +12,9 @@ type Trade struct {
 	TotalPrice float64
 	AskOrderID uint
 	BidOrderID uint
+}
+
+// CreateTrade : for creating a trade records
+func CreateTrade() {
+
 }
