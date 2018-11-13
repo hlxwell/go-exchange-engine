@@ -2,6 +2,7 @@ package orderbook
 
 import (
 	"errors"
+	"fmt"
 
 	rbt "github.com/emirpasic/gods/trees/redblacktree"
 	"github.com/emirpasic/gods/utils"
@@ -15,8 +16,34 @@ type OrderBook struct {
 	MarketOrders  *rbt.Tree
 }
 
-// func (orderbook *OrderBook) Strike(order Order) {
-// }
+// Strike the orderbook to check if any matching orders and generator trades
+//
+// Condition 1:
+// order => buy, ¥10.1
+// orderbook => sell 10.5, 11, 11.1
+// result => go to Buy orderbook
+//
+// Condition 2:
+// order => buy, ¥10.1
+// orderbook => sell 9.5, 10, 10.2
+// result => go to Buy orderbook
+//
+func (orderbook *OrderBook) Strike(order Order) bool {
+	if order.Side == buy {
+		// orderbook.LimitedOrders.Ceiling
+		it := orderbook.LimitedOrders.Iterator()
+		for it.Next() {
+			priceLevel, _ := it.Value().(*PriceLevel)
+			if priceLevel.Price < order.Price {
+				fmt.Println(priceLevel)
+			}
+		}
+	} else if order.Side == sell {
+		// orderbook.LimitedOrders.Ceiling
+	}
+
+	return false
+}
 
 // GetPriceLevel get orders of a price level by price and order type
 func (orderbook *OrderBook) GetPriceLevel(price float64, orderType OrderType) (*PriceLevel, error) {
@@ -39,29 +66,26 @@ func (orderbook *OrderBook) GetPriceLevel(price float64, orderType OrderType) (*
 
 // DeleteOrder will delete order with ID.
 func (orderbook *OrderBook) DeleteOrder(order *Order) (bool, error) {
+	var (
+		priceLevel *PriceLevel
+		value      interface{}
+		found      bool
+	)
+
 	if order.Type == limited {
-		value, found := orderbook.LimitedOrders.Get(order.Price)
-		if found {
-			priceLevel := value.(*PriceLevel)
-
-			for i, o := range priceLevel.Orders {
-				if o == order {
-					priceLevel.Orders = append(priceLevel.Orders[:i], priceLevel.Orders[i+1:]...)
-					return true, nil
-				}
-			}
-		}
+		value, found = orderbook.LimitedOrders.Get(order.Price)
 	} else {
-		value, found := orderbook.MarketOrders.Get(order.Price)
-		if found {
-			priceLevel := value.(*PriceLevel)
+		value, found = orderbook.MarketOrders.Get(order.Price)
+	}
 
-			for i, o := range priceLevel.Orders {
-				if o == order {
-					priceLevel.Orders = append(priceLevel.Orders[:i], priceLevel.Orders[i+1:]...)
-					return true, nil
-				}
-			}
+	if found {
+		priceLevel = value.(*PriceLevel)
+	}
+
+	for i, o := range priceLevel.Orders {
+		if o == order {
+			priceLevel.Orders = append(priceLevel.Orders[:i], priceLevel.Orders[i+1:]...)
+			return true, nil
 		}
 	}
 
@@ -117,14 +141,14 @@ func (orderbook *OrderBook) AddOrder(order *Order) {
 }
 
 // AllLimitedOrders return all the limited orders
-func (orderbook *OrderBook) AllLimitedOrders() []Order {
-	var orders []Order
+func (orderbook *OrderBook) AllLimitedOrders() []*Order {
+	var orders []*Order
 	i := orderbook.LimitedOrders.Iterator()
 	for i.Next() {
 		priceLevel := i.Value().(*PriceLevel)
 
 		for _, order := range priceLevel.Orders {
-			orders = append(orders, *order)
+			orders = append(orders, order)
 		}
 	}
 	return orders

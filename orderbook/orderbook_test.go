@@ -38,6 +38,7 @@ func TestAllLimitedOrders(t *testing.T) {
 
 func TestDeleteOrderbook(t *testing.T) {
 	orderbook := CreateOrderBook(xrpjpy)
+
 	order := CreateOrder(limited, buy, xrpjpy, 0.61, 100)
 	orderbook.AddOrder(order)
 
@@ -50,4 +51,14 @@ func TestDeleteOrderbook(t *testing.T) {
 	if len(orders) != 0 {
 		t.Errorf("Expected limited order count should be 0, but it was %d", len(orders))
 	}
+}
+
+func TestStrike(t *testing.T) {
+	orderbook := CreateOrderBook(xrpjpy)
+	for i := 0; i < 5; i++ {
+		order := CreateOrder(limited, buy, xrpjpy, 0.61+i*0.01*i, 100)
+		orderbook.AddOrder(order)
+	}
+
+	new_order := CreateOrder(limited, buy, xrpjpy, 0.61, 100)
 }
