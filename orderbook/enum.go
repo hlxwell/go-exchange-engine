@@ -2,7 +2,7 @@ package orderbook
 
 // ENUM in GO https://blog.learngoprogramming.com/golang-const-type-enums-iota-bc4befd096d3
 
-// Pair : Asset Pair
+// Pair : Asset Pair ==========================
 type Pair int
 
 const (
@@ -11,7 +11,7 @@ const (
 	xrpjpy
 )
 
-// OrderType : Order Type
+// OrderType : Order Type =====================
 type OrderType int
 
 const (
@@ -19,7 +19,7 @@ const (
 	market
 )
 
-// OrderStatus : Order Status
+// OrderStatus : Order Status =================
 type OrderStatus int
 
 const (
@@ -27,7 +27,7 @@ const (
 	done
 )
 
-// Side : Buy or Sell
+// Side : Buy or Sell =========================
 type Side int
 
 const (
