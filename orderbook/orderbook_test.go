@@ -5,7 +5,7 @@ import (
 )
 
 func TestCreateOrderbook(t *testing.T) {
-	orderbook := CreateOrderBook(xrpjpy)
+	orderbook := CreateOrderBook(xrpjpy, sell)
 	if orderbook.Pair != xrpjpy {
 		t.Error("Wrong pair code.")
 	}
@@ -25,7 +25,7 @@ func TestCreateOrderbook(t *testing.T) {
 }
 
 func TestAllLimitedOrders(t *testing.T) {
-	orderbook := CreateOrderBook(xrpjpy)
+	orderbook := CreateOrderBook(xrpjpy, sell)
 	for i := 1; i <= 100; i++ {
 		o := CreateOrder(limited, buy, xrpjpy, 0.61, float64(i))
 		orderbook.AddOrder(o)
@@ -37,7 +37,7 @@ func TestAllLimitedOrders(t *testing.T) {
 }
 
 func TestDeleteOrderbook(t *testing.T) {
-	orderbook := CreateOrderBook(xrpjpy)
+	orderbook := CreateOrderBook(xrpjpy, sell)
 
 	order := CreateOrder(limited, buy, xrpjpy, 0.61, 100)
 	orderbook.AddOrder(order)
@@ -54,12 +54,13 @@ func TestDeleteOrderbook(t *testing.T) {
 }
 
 func TestStrike(t *testing.T) {
-	orderbook := CreateOrderBook(xrpjpy)
-	for i := 0; i < 5; i++ {
+	orderbook := CreateOrderBook(xrpjpy, sell)
+	for i := 0; i < 100; i++ {
 		price := 0.61 * (100 + float64(i)) / 100
-		order := CreateOrder(limited, buy, xrpjpy, price, 100)
+		order := CreateOrder(limited, buy, xrpjpy, price, 10)
 		orderbook.AddOrder(order)
 	}
 
-	// new_order := CreateOrder(limited, buy, xrpjpy, 0.61, 100)
+	myOrder := CreateOrder(limited, buy, xrpjpy, 0.61, 100)
+	orderbook.Strike(*myOrder)
 }

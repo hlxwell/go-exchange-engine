@@ -4,7 +4,7 @@ import "github.com/davecgh/go-spew/spew"
 
 func main() {
 	// Create orderbook
-	orderbook := CreateOrderBook(bchjpy)
+	orderbook := CreateOrderBook(bchjpy, buy)
 
 	// Add buy order to orderbook
 	buyOrder := CreateOrder(limited, buy, xrpjpy, 100.1, 100)

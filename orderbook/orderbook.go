@@ -29,17 +29,32 @@ type OrderBook struct {
 // result => go to Buy orderbook
 //
 func (orderbook *OrderBook) Strike(order Order) bool {
+	// Striking the wrong orderbook
+	// Buy should strike Selling orderbook, vice versa.
+	if orderbook.Side == order.Side {
+		return false
+	}
+
 	if order.Side == buy {
-		// orderbook.LimitedOrders.Ceiling
+		// buy order is scanning selling part from low -> high.
 		it := orderbook.LimitedOrders.Iterator()
+		it.Begin()
 		for it.Next() {
 			priceLevel, _ := it.Value().(*PriceLevel)
-			if priceLevel.Price < order.Price {
-				fmt.Println(priceLevel)
+			if order.Price >= priceLevel.Price {
+				fmt.Println("deal:", priceLevel)
 			}
 		}
 	} else if order.Side == sell {
-		// orderbook.LimitedOrders.Ceiling
+		// sell order is scanning buying part from high -> low.
+		it := orderbook.LimitedOrders.Iterator()
+		it.End()
+		for it.Prev() {
+			priceLevel, _ := it.Value().(*PriceLevel)
+			if order.Price <= priceLevel.Price {
+				fmt.Println("deal:", priceLevel)
+			}
+		}
 	}
 
 	return false
@@ -82,9 +97,9 @@ func (orderbook *OrderBook) DeleteOrder(order *Order) (bool, error) {
 		priceLevel = value.(*PriceLevel)
 	}
 
-	for i, o := range priceLevel.Orders {
+	for i, o := range *priceLevel.Orders {
 		if o == order {
-			priceLevel.Orders = append(priceLevel.Orders[:i], priceLevel.Orders[i+1:]...)
+			*priceLevel.Orders = append((*priceLevel.Orders)[:i], (*priceLevel.Orders)[i+1:]...)
 			return true, nil
 		}
 	}
@@ -112,14 +127,14 @@ func (orderbook *OrderBook) AddMarketOrder(order *Order) {
 	value, found := orderbook.MarketOrders.Get(order.Price)
 	if found {
 		priceLevel = value.(*PriceLevel)
-		priceLevel.Orders = append(priceLevel.Orders, order)
+		*priceLevel.Orders = append(*priceLevel.Orders, order)
 	} else {
 		priceLevel = &PriceLevel{
 			Price:  order.Price,
 			Volume: order.Amount,
-			Orders: []*Order{},
+			Orders: &[]*Order{},
 		}
-		priceLevel.Orders = append(priceLevel.Orders, order)
+		*priceLevel.Orders = append(*priceLevel.Orders, order)
 	}
 	orderbook.MarketOrders.Put(order.Price, priceLevel)
 }
@@ -130,14 +145,14 @@ func (orderbook *OrderBook) AddLimitedOrder(order *Order) {
 	value, found := orderbook.LimitedOrders.Get(order.Price)
 	if found {
 		priceLevel = value.(*PriceLevel)
-		priceLevel.Orders = append(priceLevel.Orders, order)
+		*priceLevel.Orders = append(*priceLevel.Orders, order)
 	} else {
 		priceLevel = &PriceLevel{
 			Price:  order.Price,
 			Volume: order.Amount,
-			Orders: []*Order{},
+			Orders: &[]*Order{},
 		}
-		priceLevel.Orders = append(priceLevel.Orders, order)
+		*priceLevel.Orders = append(*priceLevel.Orders, order)
 	}
 	orderbook.LimitedOrders.Put(priceLevel.Price, priceLevel)
 }
@@ -151,7 +166,7 @@ func (orderbook *OrderBook) AllLimitedOrders() []*Order {
 	for i.Next() {
 		priceLevel := i.Value().(*PriceLevel)
 
-		for _, order := range priceLevel.Orders {
+		for _, order := range *priceLevel.Orders {
 			orders = append(orders, order)
 		}
 	}
@@ -159,12 +174,13 @@ func (orderbook *OrderBook) AllLimitedOrders() []*Order {
 }
 
 // CreateOrderBook : Create a new order book
-func CreateOrderBook(pair Pair) *OrderBook {
+func CreateOrderBook(pair Pair, side Side) *OrderBook {
 	limitedOrders := rbt.NewWith(utils.Float64Comparator) // empty (keys are of type int)
 	marketOrders := rbt.NewWith(utils.Float64Comparator)  // empty (keys are of type int)
 
 	orderbook := &OrderBook{
 		Pair:          pair,
+		Side:          side,
 		LimitedOrders: limitedOrders,
 		MarketOrders:  marketOrders,
 	}
