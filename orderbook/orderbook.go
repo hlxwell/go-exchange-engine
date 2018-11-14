@@ -92,6 +92,20 @@ func (orderbook *OrderBook) DeleteOrder(order *Order) (bool, error) {
 	return false, errors.New("Cannot delete order")
 }
 
+// =====================================================================
+
+// AddOrder add order to price level
+func (orderbook *OrderBook) AddOrder(order *Order) {
+	switch order.Type {
+	case market:
+		orderbook.AddMarketOrder(order)
+		break
+	case limited:
+		orderbook.AddLimitedOrder(order)
+		break
+	}
+}
+
 // AddMarketOrder add market order
 func (orderbook *OrderBook) AddMarketOrder(order *Order) {
 	var priceLevel *PriceLevel
@@ -128,17 +142,7 @@ func (orderbook *OrderBook) AddLimitedOrder(order *Order) {
 	orderbook.LimitedOrders.Put(priceLevel.Price, priceLevel)
 }
 
-// AddOrder add order to price level
-func (orderbook *OrderBook) AddOrder(order *Order) {
-	switch order.Type {
-	case market:
-		orderbook.AddMarketOrder(order)
-		break
-	case limited:
-		orderbook.AddLimitedOrder(order)
-		break
-	}
-}
+// =====================================================================
 
 // AllLimitedOrders return all the limited orders
 func (orderbook *OrderBook) AllLimitedOrders() []*Order {

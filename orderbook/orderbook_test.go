@@ -56,9 +56,10 @@ func TestDeleteOrderbook(t *testing.T) {
 func TestStrike(t *testing.T) {
 	orderbook := CreateOrderBook(xrpjpy)
 	for i := 0; i < 5; i++ {
-		order := CreateOrder(limited, buy, xrpjpy, 0.61+i*0.01*i, 100)
+		price := 0.61 * (100 + float64(i)) / 100
+		order := CreateOrder(limited, buy, xrpjpy, price, 100)
 		orderbook.AddOrder(order)
 	}
 
-	new_order := CreateOrder(limited, buy, xrpjpy, 0.61, 100)
+	// new_order := CreateOrder(limited, buy, xrpjpy, 0.61, 100)
 }
