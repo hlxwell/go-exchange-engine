@@ -2,7 +2,6 @@ package orderbook
 
 import (
 	"errors"
-	"fmt"
 
 	rbt "github.com/emirpasic/gods/trees/redblacktree"
 	"github.com/emirpasic/gods/utils"
@@ -28,36 +27,81 @@ type OrderBook struct {
 // orderbook => sell 9.5, 10, 10.2
 // result => go to Buy orderbook
 //
-func (orderbook *OrderBook) Strike(order Order) bool {
+func (orderbook *OrderBook) Strike(myOrder *Order) *[]*Trade {
 	// Striking the wrong orderbook
 	// Buy should strike Selling orderbook, vice versa.
-	if orderbook.Side == order.Side {
-		return false
+	if orderbook.Side == myOrder.Side {
+		return nil
 	}
 
-	if order.Side == buy {
+	trades := &[]*Trade{}
+
+	if myOrder.Side == buy {
 		// buy order is scanning selling part from low -> high.
-		it := orderbook.LimitedOrders.Iterator()
-		it.Begin()
-		for it.Next() {
-			priceLevel, _ := it.Value().(*PriceLevel)
-			if order.Price >= priceLevel.Price {
-				fmt.Println("deal:", priceLevel)
+		iter := orderbook.LimitedOrders.Iterator()
+		iter.Begin()
+		// loop the pricelevel
+		for iter.Next() {
+			priceLevel, _ := iter.Value().(*PriceLevel)
+			// loop the orders in pricelevel
+			for _, order := range *priceLevel.Orders {
+				if myOrder.Price >= priceLevel.Price && myOrder.Amount > 0 {
+					if myOrder.Amount > order.Amount {
+						// demand > supply
+						*trades = append(*trades, &Trade{Price: order.Price, Amount: order.Amount})
+						myOrder.Amount = myOrder.Amount - order.Amount
+						order.Amount = 0
+						// striked order should be deleted
+						// FIXME: Cannot delete order here.
+						// *priceLevel.Orders = append((*priceLevel.Orders)[:i], (*priceLevel.Orders)[i+1:]...)
+					} else if myOrder.Amount < order.Amount {
+						// supply > demand
+						*trades = append(*trades, &Trade{Price: order.Price, Amount: myOrder.Amount})
+						order.Amount = order.Amount - myOrder.Amount
+						myOrder.Amount = 0
+						break
+					}
+				} else if myOrder.Amount == 0 {
+					break
+				} else if myOrder.Price <= order.Price { // selling price is too high.
+					// we need to put the order to the buy orderbook.
+				}
 			}
 		}
-	} else if order.Side == sell {
+	} else if myOrder.Side == sell {
 		// sell order is scanning buying part from high -> low.
-		it := orderbook.LimitedOrders.Iterator()
-		it.End()
-		for it.Prev() {
-			priceLevel, _ := it.Value().(*PriceLevel)
-			if order.Price <= priceLevel.Price {
-				fmt.Println("deal:", priceLevel)
+		iter := orderbook.LimitedOrders.Iterator()
+		iter.End()
+		for iter.Prev() {
+			priceLevel, _ := iter.Value().(*PriceLevel)
+			// loop the orders in pricelevel
+			for _, order := range *priceLevel.Orders {
+				if myOrder.Price <= priceLevel.Price && myOrder.Amount > 0 {
+					if myOrder.Amount > order.Amount {
+						// demand > supply
+						*trades = append(*trades, &Trade{Price: order.Price, Amount: order.Amount})
+						myOrder.Amount = myOrder.Amount - order.Amount
+						order.Amount = 0
+						// striked order should be deleted
+						// FIXME: Cannot delete order here.
+						// *priceLevel.Orders = append((*priceLevel.Orders)[:i], (*priceLevel.Orders)[i+1:]...)
+					} else if myOrder.Amount < order.Amount {
+						// supply > demand
+						*trades = append(*trades, &Trade{Price: order.Price, Amount: myOrder.Amount})
+						order.Amount = order.Amount - myOrder.Amount
+						myOrder.Amount = 0
+						break
+					}
+				} else if myOrder.Amount == 0 {
+					break
+				} else if myOrder.Price <= order.Price { // selling price is too high.
+					// we need to put the order to the buy orderbook.
+				}
 			}
 		}
 	}
 
-	return false
+	return trades
 }
 
 // GetPriceLevel get orders of a price level by price and order type
