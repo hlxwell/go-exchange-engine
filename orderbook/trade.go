@@ -14,7 +14,15 @@ type Trade struct {
 	BidOrderID uint
 }
 
-// CreateTrade : for creating a trade records
-func CreateTrade() {
+func (trade *Trade) calculateTotalPrice() {
+	trade.TotalPrice = trade.Price * trade.Amount
+}
 
+// CreateTrade : for creating a trade records
+func CreateTrade(price float64, amount float64, pair Pair) {
+	trade := &Trade{}
+	trade.Price = price
+	trade.Amount = amount
+	trade.Pair = pair
+	trade.calculateTotalPrice()
 }
