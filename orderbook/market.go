@@ -33,75 +33,57 @@ func (market *Market) Strike(myOrder *Order) *[]*Trade {
 		counterOrderbook = market.SellOrderBook
 	}
 
+	// buy order is scanning selling part from low -> high.
+	iter := orderbook.LimitedOrders.Iterator()
 	if myOrder.Side == buy {
-		// buy order is scanning selling part from low -> high.
-		iter := orderbook.LimitedOrders.Iterator()
 		iter.Begin()
-		// loop the pricelevel
-		for iter.Next() {
-			priceLevel, _ := iter.Value().(*PriceLevel)
-			// loop the orders in pricelevel
-			for _, order := range *priceLevel.Orders {
-				// 继续执行条件:
-				// - 有符合价格的订单
-				// - 订单没有被fill
-				if myOrder.Price >= priceLevel.Price && myOrder.Amount > 0 {
-					if myOrder.Amount > order.Amount {
-						*trades = append(*trades, &Trade{Price: order.Price, Amount: order.Amount})
-						myOrder.Amount = myOrder.Amount - order.Amount
-						order.Amount = 0
-						continue
-					} else if myOrder.Amount < order.Amount {
-						*trades = append(*trades, &Trade{Price: order.Price, Amount: myOrder.Amount})
-						order.Amount = order.Amount - myOrder.Amount
-						myOrder.Amount = 0
-						break
-					}
-				} else if myOrder.Amount == 0 {
-					break
-				}
-			}
-
-			// striked order should be deleted
-			var orders []*Order
-			for _, order := range *priceLevel.Orders {
-				if order.Amount != 0 {
-					orders = append(orders, order)
-				}
-			}
-			*priceLevel.Orders = orders
-		}
-	} else if myOrder.Side == sell {
-		// sell order is scanning buying part from high -> low.
-		iter := orderbook.LimitedOrders.Iterator()
+	} else {
 		iter.End()
-		for iter.Prev() {
-			priceLevel, _ := iter.Value().(*PriceLevel)
-			// loop the orders in pricelevel
-			for _, order := range *priceLevel.Orders {
-				// 继续执行条件:
-				// - 有符合价格的订单
-				// - 订单没有被fill
-				if myOrder.Price <= priceLevel.Price && myOrder.Amount > 0 {
-					if myOrder.Amount > order.Amount {
-						// 不能 Fill 订单
-						*trades = append(*trades, &Trade{Price: order.Price, Amount: order.Amount})
-						myOrder.Amount = myOrder.Amount - order.Amount
-						order.Amount = 0
-						continue
-					} else if myOrder.Amount < order.Amount {
-						// 可以 Fill 订单
-						*trades = append(*trades, &Trade{Price: order.Price, Amount: myOrder.Amount})
-						order.Amount = order.Amount - myOrder.Amount
-						myOrder.Amount = 0
-						break
-					}
-				} else if myOrder.Amount == 0 {
-					break
-				}
+	}
+
+	var hasElement bool
+	// loop the pricelevel
+	for {
+		if myOrder.Side == buy {
+			hasElement = iter.Next()
+		} else {
+			hasElement = iter.Prev()
+		}
+
+		if !hasElement {
+			break
+		}
+
+		priceLevel, _ := iter.Value().(*PriceLevel)
+		// loop the orders in pricelevel
+		for _, order := range *priceLevel.Orders {
+			// 继续执行条件:
+			// - 有符合价格的订单
+			// - 订单没有被fill
+			if (myOrder.Side == sell && myOrder.Price > priceLevel.Price) ||
+				(myOrder.Side == buy && myOrder.Price < priceLevel.Price) {
+				break
 			}
 
-			// striked order should be deleted
+			if myOrder.Amount > 0 {
+				if myOrder.Amount > order.Amount {
+					*trades = append(*trades, &Trade{Price: order.Price, Amount: order.Amount})
+					myOrder.Amount = myOrder.Amount - order.Amount
+					order.Amount = 0
+					continue
+				} else if myOrder.Amount < order.Amount {
+					*trades = append(*trades, &Trade{Price: order.Price, Amount: myOrder.Amount})
+					order.Amount = order.Amount - myOrder.Amount
+					myOrder.Amount = 0
+					break
+				}
+			} else if myOrder.Amount == 0 {
+				break
+			}
+		}
+
+		// striked order should be deleted
+		if priceLevel.HasBlankOrder() {
 			var orders []*Order
 			for _, order := range *priceLevel.Orders {
 				if order.Amount != 0 {
@@ -117,7 +99,6 @@ func (market *Market) Strike(myOrder *Order) *[]*Trade {
 	// - 订单没被fill，没有符合价格的订单了
 	// - 订单没被fill，没有订单了
 	if myOrder.Amount > 0 {
-		// but should be opposite side orderbook
 		counterOrderbook.AddOrder(myOrder)
 	}
 
