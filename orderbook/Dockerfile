@@ -1,3 +1,9 @@
-FROM alpine:3.8
+FROM golang:onbuild
 
-ENTRYPOINT ["ls"]
+RUN mkdir /app
+ADD . /app/
+WORKDIR /app
+
+RUN go build -o orderbook .
+
+ENTRYPOINT ["/app/orderbook"]
