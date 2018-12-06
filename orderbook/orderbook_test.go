@@ -6,10 +6,6 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-// STRIKE ORDER ==============================================
-// when orderbook is thick enough
-// when orderbook is not thick enough
-
 func TestOrderbook(t *testing.T) {
 	Convey("Test CreateOrderBook", t, func() {
 		orderbook := CreateOrderBook(xrpjpy, sell)

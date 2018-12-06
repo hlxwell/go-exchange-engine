@@ -32,6 +32,8 @@ func TestCreateMarket(t *testing.T) {
 			So(len(orders), ShouldBeGreaterThan, 0)
 		})
 
+		// when orderbook is thick enough
+
 		Convey("When strike by a sell order", func() {
 			myOrder := CreateOrder(limited, sell, xrpjpy, 0.68, 88)
 			Convey("should be some trades which has higher price", func() {
@@ -53,6 +55,8 @@ func TestCreateMarket(t *testing.T) {
 				So(len(*trades), ShouldBeGreaterThan, 0)
 			})
 		})
+
+		// when orderbook is not thick enough
 
 		Convey("When an sell order cannot be fullfilled", func() {
 			myOrder := CreateOrder(limited, sell, xrpjpy, 0.61, 1200)
