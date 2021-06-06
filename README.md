@@ -1,3 +1,10 @@
+# Introduction
+
+Just for the study purpose, trying to putting the learning material for building crypto exchange to one place.
+# System Diagram
+
+![diagram](https://raw.githubusercontent.com/hlxwell/go-exchange-engine/master/docs/diagram.jpg)
+
 # OrderBook concept
 
 - https://en.wikipedia.org/wiki/Order_book_(trading)
@@ -57,4 +64,3 @@ https://github.com/smartystreets/goconvey
 [How to Build a Cryptocurrency Exchange App](https://medium.com/swlh/how-to-build-a-cryptocurrency-exchange-app-d463d3e0ccb3)
 
 [Go Cryptotrader](https://github.com/thrasher-/gocryptotrader)
-
